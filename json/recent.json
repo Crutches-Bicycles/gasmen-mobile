@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Датчик утечки газа",
+    "text":"адрес 1",
+    "status": "ОК",
+    "indications": "10м",
+    "Date" : "10.09.2021",
+    "model" : "XZ1029UIS",
+    "flag": "1",
+    "guarantee": "10.12.2021"
+  },
+  {
+    "name": "Датчик 2",
+    "text":"адрес 2",
+    "status": "ОК",
+    "indications": "10м",
+    "Date" : "11.09.2021",
+    "model" : "XZ1029UIV",
+    "flag": "0",
+    "guarantee": "10.12.2021"
+  },
+  {
+    "name": "Датчик 3",
+    "text":"адрес 3",
+    "status": "ERROR",
+    "indications": "10м",
+    "Date" : "12.09.2021",
+    "model" : "XZ1029UIZ",
+    "flag": "1",
+    "guarantee": "10.12.2021"
+  },
+  {
+    "name": "Датчик 4",
+    "text":"адрес 4",
+    "status": "ОК",
+    "indications": "10м",
+    "Date" : "13.09.2021",
+    "model" : "XZ1029UIQ",
+    "flag": "0",
+    "guarantee": "10.12.2021"
+  }
+]
