@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:gassmen/auth_screen.dart';
 import 'package:gassmen/constans.dart';
 import 'package:get/get.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class TryPage extends StatefulWidget {
   const TryPage({Key? key}) : super(key: key);
@@ -14,13 +15,27 @@ class TryPage extends StatefulWidget {
 }
 
 class _TryPageState extends State<TryPage> {
-
-
-
   List filters = ['Все датчики','Датчики утечки','Датчик контроля'];
   List list=[];
-  List info=[];
   bool flag = true;
+
+  _test() async {
+    var data = await http.get(Uri.parse('http://10.0.2.2:8080/api/v1/sensors'));
+
+    setState(() {
+      list = json.decode(data.body.toString());
+
+      DateFormat dateFormat = DateFormat("dd.MM.yyyy");
+
+      for (int i = 0; i < list.length; i++) {
+        list[i]['date'] = dateFormat.format(DateTime.parse(list[i]['date']));
+        list[i]['warranty'] = dateFormat.format(DateTime.parse(list[i]['warranty']));
+      }
+    });
+
+    //print(list[0]['id']);
+    //print(data.body.toString());
+  }
 
   _readData1() async {
     await DefaultAssetBundle.of(context).loadString("json/test.json").then((s) {
@@ -33,12 +48,8 @@ class _TryPageState extends State<TryPage> {
   _readData() async {
     await DefaultAssetBundle.of(context).loadString("json/recent.json").then((s) {
       setState(() {
-        list = json.decode(s);
-      });
-    });
-    await DefaultAssetBundle.of(context).loadString("json/detail.json").then((s) {
-      setState(() {
-        info = json.decode(s);
+        print(list);
+        //list = json.decode(s);
       });
     });
   }
@@ -54,6 +65,7 @@ class _TryPageState extends State<TryPage> {
   @override
   void initState(){
     _readData();
+    _test();
     super.initState();
   }
 
@@ -175,7 +187,7 @@ class _TryPageState extends State<TryPage> {
             Expanded(child: SingleChildScrollView(
               child: Column(
                 children: [
-                  for(int i = 0;i<list.length;i++)
+                  for(int i = 0; i < list.length; i++)
                     Container(
                         height: 230,
                         //padding: const EdgeInsets.all(30),
@@ -183,13 +195,13 @@ class _TryPageState extends State<TryPage> {
                         child: GestureDetector(
                           onTap: (){
                             Get.toNamed("/detail/", arguments: {
-                              'name': list[i]['name'].toString(),
-                              'text': list[i]['text'].toString(),
-                              'status': list[i]['status'].toString(),
-                              'indications': list[i]['indications'].toString(),
-                              'Date': list[i]['Date'].toString(),
+                              'name': list[i]['model'].toString(),
+                              'text': list[i]['location'].toString(),
+                              'status': list[i]['idSensorStatus'].toString(),
+                              'indications': list[i]['value'].toString(),
+                              'Date': list[i]['warranty'].toString(),
                               'model': list[i]['model'].toString(),
-                              'guarantee': list[i]['guarantee'].toString()
+                              'guarantee': list[i]['date'].toString()
                             });
                           },
 
@@ -217,7 +229,7 @@ class _TryPageState extends State<TryPage> {
                                     child:Row(
                                       children: [
                                         Text(
-                                          list[i]['name'],
+                                          list[i]['model'],
                                           style: TextStyle(
                                               fontSize: 21,
                                               fontWeight: FontWeight.bold,
@@ -233,7 +245,7 @@ class _TryPageState extends State<TryPage> {
                                 Container(
                                   width: MediaQuery.of(context).size.width,
                                   child: Text(
-                                    list[i]['text'],
+                                    list[i]['location'],
                                     style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.grey
@@ -255,7 +267,7 @@ class _TryPageState extends State<TryPage> {
                                         ),
                                         SizedBox(width: 20,),
                                         Text(
-                                          list[i]['status'],
+                                          list[i]['idSensorStatus'].toString(),
                                           style: TextStyle(
                                               fontSize: 17,
                                               fontWeight: FontWeight.bold,
@@ -281,7 +293,7 @@ class _TryPageState extends State<TryPage> {
                                         ),
                                         SizedBox(width: 20,),
                                         Text(
-                                          list[i]['indications'],
+                                          list[i]['value'].toString(),
                                           style: TextStyle(
                                             fontSize: 17,
                                             fontWeight: FontWeight.bold,
@@ -308,7 +320,7 @@ class _TryPageState extends State<TryPage> {
                                         ),
                                         SizedBox(width: 20,),
                                         Text(
-                                          list[i]['Date'],
+                                          list[i]['date'],
                                           style: TextStyle(
                                             fontSize: 17,
                                             fontWeight: FontWeight.bold,
