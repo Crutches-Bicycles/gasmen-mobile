@@ -71,11 +71,16 @@ class _AuthScreenState extends State<AuthScreen> {
                                   borderRadius: BorderRadius.circular(18.0),
                                   side: BorderSide(color: Colors.white)),
                                 onPressed: (){
-                                  if(auth.contains(nameController.text)){
-                                    Get.to(()=>TryPage());
+                                  if(nameController.text != '' && passwordController.text != ''){
+                                    if(auth.contains(nameController.text)){
+                                      Get.to(()=>TryPage());
+                                    }
+                                    else{
+                                      _showMessageDialog(context,'Неверный логин или пароль');
+                                    }
                                   }
                                   else{
-                                    _showMessageDialog(context);
+                                    _showMessageDialog(context,'Заполните пустые поля');
                                   }
 
                                 },
@@ -123,11 +128,11 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
-  _showMessageDialog(BuildContext context) => showDialog(
+  _showMessageDialog(BuildContext context, String message) => showDialog(
     context: context,
     builder: (context) => AlertDialog(
       title: Text('Ошибка авторизации',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),),
-      content: Text('Пользователя не существует',style: TextStyle(color: Colors.black, fontSize: 15),),
+      content: Text(message,style: TextStyle(color: Colors.black, fontSize: 15),),
       actions: [
         FlatButton(
             onPressed: ()=> Navigator.of(context).pop(),
