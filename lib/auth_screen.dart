@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:gassmen/constans.dart';
 import 'package:gassmen/mainpage.dart';
@@ -16,6 +18,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  List auth=['gasman@gmail.com','test@yandex.ru'];
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +53,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           child: Column(
                             children: [
                             Text(
-                            'Вход',
+                            'Авторизация',
                             textAlign: TextAlign.center,
                             style:
                             GoogleFonts.openSans(color: Colors.white, fontSize: 28),
@@ -59,15 +63,26 @@ class _AuthScreenState extends State<AuthScreen> {
                           SizedBox(height: 30),
                           _buildTextField(passwordController,  'пароль', true),
                           SizedBox(height: 30),
-                          MaterialButton(
-                              onPressed: (){
-                                Get.to(()=>TryPage());
-                              },
-                            color: Colors.white,
-                            child: Icon(Icons.arrow_forward, color: Colors.black, size: 25,),
+                          Container(
+                            height: 35,
+                            width: _size.width,
+                            child: MaterialButton(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                  side: BorderSide(color: Colors.white)),
+                                onPressed: (){
+                                  if(auth.contains(nameController.text)){
+                                    Get.to(()=>TryPage());
+                                  }
+                                  else{
+                                    _showMessageDialog(context);
+                                  }
 
-                              )
-
+                                },
+                              color: Colors.white,
+                              child: Text("Вход", style: TextStyle(color: Colors.black),),
+                                ),
+                          ),
                             ],
                           ),
                         )
@@ -108,5 +123,18 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
+  _showMessageDialog(BuildContext context) => showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Ошибка авторизации',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black),),
+      content: Text('Пользователя не существует',style: TextStyle(color: Colors.black, fontSize: 15),),
+      actions: [
+        FlatButton(
+            onPressed: ()=> Navigator.of(context).pop(),
+            child: Text('Закрыть', style: TextStyle(color: Colors.blue),),
+        )
+      ],
+    )
+  );
 }
 
