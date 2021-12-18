@@ -19,6 +19,26 @@ class _TryPageState extends State<TryPage> {
   List list=[];
   bool flag = true;
 
+  List baseList = [];
+
+
+  _upload() async {
+    var data = await http.get(Uri.parse('http://10.0.2.2:8080/api/v1/sensors'));
+
+    setState(() {
+      baseList = json.decode(data.body.toString());
+
+      DateFormat dateFormat = DateFormat("dd.MM.yyyy");
+
+      for (int i = 0; i < baseList.length; i++) {
+        baseList[i]['date'] = dateFormat.format(DateTime.parse(baseList[i]['date']));
+        baseList[i]['warranty'] = dateFormat.format(DateTime.parse(baseList[i]['warranty']));
+      }
+
+      list = baseList;
+    });
+  }
+
   _test() async {
     var data = await http.get(Uri.parse('http://10.0.2.2:8080/api/v1/sensors'));
 
@@ -32,24 +52,47 @@ class _TryPageState extends State<TryPage> {
         list[i]['warranty'] = dateFormat.format(DateTime.parse(list[i]['warranty']));
       }
     });
-
-    //print(list[0]['id']);
-    //print(data.body.toString());
   }
 
-  _readData1() async {
+  _sortDefault() async {
     await DefaultAssetBundle.of(context).loadString("json/test.json").then((s) {
       setState(() {
-        list = json.decode(s);
+        list = baseList;
       });
     });
   }
 
-  _readData() async {
+
+  _sortSensorsTypeTwo() async {
+    await DefaultAssetBundle.of(context).loadString("json/test.json").then((s) {
+      setState(() {
+        List sensors = [];
+
+        for (int i = 0; i < baseList.length; i++) {
+          if (baseList[i]['idSensorType'] == 0) {
+            sensors.add(baseList[i]);
+          }
+        }
+
+        list = sensors;
+      });
+    });
+  }
+
+  _sortSensorsTypeOne() async {
     await DefaultAssetBundle.of(context).loadString("json/recent.json").then((s) {
       setState(() {
-        print(list);
-        //list = json.decode(s);
+
+        List sensors = [];
+
+        for (int i = 0; i < baseList.length; i++) {
+          if (baseList[i]['idSensorType'] == 1) {
+            sensors.add(baseList[i]);
+          }
+        }
+
+        list = sensors;
+
       });
     });
   }
@@ -64,8 +107,8 @@ class _TryPageState extends State<TryPage> {
 */
   @override
   void initState(){
-    _readData();
-    _test();
+    _upload();
+    //_test();
     super.initState();
   }
 
@@ -126,12 +169,15 @@ class _TryPageState extends State<TryPage> {
                   itemCount: 3,
                   itemBuilder: (_, i){
                     return GestureDetector(
-                      onTap: (){
-                        if(i == 0) {
-                          _readData();
+                      onTap: () {
+                        if ( i == 0) {
+                          _test();
                         }
                         if(i == 1) {
-                          _readData1();
+                          _sortSensorsTypeOne();
+                        }
+                        if(i == 2) {
+                          _sortSensorsTypeTwo();
                         }
                       },
                       //поменять на вертикальные
